@@ -20,10 +20,10 @@ CA_DOMAIN="confluent.local"
 
 # Cert details
 orgunit=TEST
-org=CONFLUENT
-locality=PaloAlto
-state=Ca
-country=US
+org=CODECENTRIC
+locality=Karlsruhe
+state=Baden-Wuerttemberg
+country=DE
 
 CA_SUBJ="/CN=ca1.${CA_DOMAIN}/OU=${orgunit}/O=${org}/L=${locality}/ST=${state}/C=${country}"
 CA_PASS="confluent"
