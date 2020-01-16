@@ -48,7 +48,7 @@ The accompanying play-book provides a quick way to test the procedure described 
 
 The demo uses versions of Wireshark and kafkacat not (yet) available in the standard package repositories.
 
-- the attached _Makefile_ will build several Docker containers with the required versions by downloading the source code and compiling the required binaries.
+- the attached _Makefile_ will build several Docker containers with the needed versions by downloading the source code and compiling the required binaries.
 - the [jSSLKeyLog](http://jsslkeylog.sourceforge.net/) Agent will also be built from source and the artifact saved in the _tools_ directory. The directory will then be mounted inside the Docker containers running the Kafka Broker(s) and the agent attached via
   
   ```text
@@ -65,7 +65,7 @@ Important: building the required Docker containers requires some time as Wiresha
 
 ### Running the demo
 
-- Clone the repository
+- Clone this repository
 
 - bootstrap the environment
 
@@ -111,7 +111,7 @@ Important: building the required Docker containers requires some time as Wiresha
 
   [https://localhost:14500/?username=wireshark&password=wireshark](https://localhost:14500/?username=wireshark&password=wireshark)
 
-- configure Wireshark to decode the Kafka TLS traffic as detailed [hier](#procedure).
+- configure Wireshark to decode the Kafka TLS traffic as detailed [here](#procedure).
 
 - stop and destroy the stack when finished
 
