@@ -9,7 +9,7 @@ ENV RUN_DEPS software-properties-common python3-xpra xpra xauth xpra-html5 webso
 
 ENV WIRESHARK_VERSION "3.2.0"
 ENV WIRESHARK_NAME "wireshark"
-ENV WIRESHARK_DOWNLOAD_URL "https://1.eu.dl.wireshark.org/src/${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz"
+ENV WIRESHARK_DOWNLOAD_URL "https://1.eu.dl.wireshark.org/src/all-versions/${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz"
 
 # install dependencies
 RUN apt-get update && \
