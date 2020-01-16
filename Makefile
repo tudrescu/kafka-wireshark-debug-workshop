@@ -67,14 +67,14 @@ build-jsslkeylog:            ## build jSSLKeyLog.jar from source
 	wget -q -O $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/$(JSSLKEYLOG_ARCHIVE) ${JSSLKEYLOG_DOWNLOAD_URL}
 	unzip -o $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/$(JSSLKEYLOG_ARCHIVE) -d $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/$(JSSLKEYLOG_NAME)-$(JSSLKEYLOG_VERSION)-src
 	docker run -it \
-      	-rm \
-      	-u `id -u` \
-      	--name jsslkeylog \
-      	-v "$(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/${JSSLKEYLOG_NAME}-${JSSLKEYLOG_VERSION}-src":/usr/src/mymaven \
-      	-w /usr/src/mymaven \
-      	maven:"${MAVEN_DOCKER_VERSION}" mvn clean install \
-      	-Dmaven.compiler.source="${JDK_VERSION}" \
-      	-Dmaven.compiler.target="${JDK_VERSION}"
+		-rm \
+		-u `id -u` \
+		--name jsslkeylog \
+		-v "$(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/${JSSLKEYLOG_NAME}-${JSSLKEYLOG_VERSION}-src":/usr/src/mymaven \
+		-w /usr/src/mymaven \
+		maven:"${MAVEN_DOCKER_VERSION}" mvn clean install \
+		-Dmaven.compiler.source="${JDK_VERSION}" \
+		-Dmaven.compiler.target="${JDK_VERSION}"
 	@cp "$(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/${JSSLKEYLOG_NAME}-${JSSLKEYLOG_VERSION}-src/${JSSLKEYLOG_NAME}.jar" "$(CURRENT_DIR)/tools/"
 	rm -rf $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog
 	@$(call echo_stdout_footer, Finished building jSSLKeyLog Agent)
