@@ -1,0 +1,112 @@
+version: "3.5"
+
+services:
+
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:${CP_VERSION}"
+    container_name: zookeeper
+    hostname: zookeeper
+    domainname: confluent.local
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    volumes:
+      - $PWD/certs/generated_ca/:/var/lib/secret
+    networks:
+      default:
+        aliases: 
+          - zookeeper.confluent.local
+
+
+  kafka-1:
+    image: "confluentinc/cp-enterprise-kafka:${CP_VERSION}"
+    container_name: kafka-1
+    hostname: kafka-1
+    domainname: confluent.local
+    depends_on: 
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_RACK: "rack1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "kafka-1:9092"
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
+      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-1:9093,PLAINTEXT://kafka-1:9092
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.kafka-1.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka-1_keystore_creds
+      KAFKA_SSL_KEY_CREDENTIALS: kafka-1_sslkey_creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.kafka-1.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: kafka-1_truststore_creds
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
+      # enables 2-way authentication
+      KAFKA_SSL_CLIENT_AUTH: "required"
+      KAFKA_OPTS: "-javaagent:/tmp/tools/jSSLKeyLog.jar==/tmp/ssl-key-log/output.log"
+    volumes:
+      - $PWD/certs/generated_ca/:/etc/kafka/secrets
+      - $PWD/tools/:/tmp/tools
+      - $PWD/work/ssl-key-log/:/tmp/ssl-key-log
+    networks:
+      default:
+        aliases:
+         - kafka-1.confluent.local
+
+
+  kafka-client:
+    image: "confluentinc/cp-kafka:${CP_VERSION}"
+    container_name: kafka-client
+    entrypoint: /bin/sh -c "sleep 10000000"
+    depends_on:
+      - kafka-1
+      - zookeeper
+    # ports:
+    #   - 20000:20000
+    volumes:
+      - ${PWD}/certs/generated_ca/:/etc/kafka/secrets
+      - ${PWD}/tools/:/tmp/tools
+      - ${PWD}/work/ssl-key-log/:/tmp/ssl-key-log
+
+
+  kafkacat:
+    image: docker-kafkacat:latest
+    container_name: kafkacat    
+    hostname: kafkacat
+    domainname: confluent.local
+    depends_on:
+      - zookeeper
+      - kafka-1
+    entrypoint: /bin/sh -c "sleep 10000000"
+    volumes: 
+      - $PWD/certs/generated_ca/:/tmp/certs
+    networks:
+      default:
+        aliases:
+          - kafkacat.confluent.local
+
+
+  wireshark:
+    image: docker-wireshark:latest
+    container_name: wireshark
+    restart: unless-stopped
+    depends_on:
+      - kafkacat
+    ports:
+      - 14500:14500
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - type: volume
+        source: ${PWD}/work/
+        target: /home/wireshark/work
+        read_only: true
+      # - ${PWD}/work/:/home/wireshark     
+    networks:
+      default:
+
+                 
+
+
+

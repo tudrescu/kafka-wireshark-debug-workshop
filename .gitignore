@@ -1,0 +1,3 @@
+.vscode
+tools/*.jar
+certs/generated_ca
