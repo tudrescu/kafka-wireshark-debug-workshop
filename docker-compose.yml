@@ -98,13 +98,12 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - type: volume
-        source: ${PWD}/work/
+      - type: bind
+        source: ${PWD}/work
         target: /home/wireshark/work
-        read_only: true
-      # - ${PWD}/work/:/home/wireshark     
+        read_only: true    
     networks:
-      default:
+      default:    
 
                  
 

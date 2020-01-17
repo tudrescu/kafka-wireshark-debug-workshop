@@ -134,7 +134,7 @@ certs: 	                          ## create certificates for testing
 delete-work-files:           ## delete working files (sslkeylog and pcap files)
 	@$(call echo_stdout_header, Delete working files)
 	find $(CURRENT_DIR)/work/ssl-key-log -type f ! -name '.gitkeep' -delete
-	find $(CURRENT_DIR)/work/tcpdump-trace -type f ! -name '.gitkeep'-delete
+	find $(CURRENT_DIR)/work/tcpdump-trace -type f ! -name '.gitkeep' -delete
 	@$(call echo_stdout_footer, Finished deleting working files)
 
 
