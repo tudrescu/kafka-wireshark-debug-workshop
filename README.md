@@ -111,7 +111,7 @@ Important: building the required Docker containers requires some time as Wiresha
 
   [https://localhost:14500/?username=wireshark&password=wireshark](https://localhost:14500/?username=wireshark&password=wireshark)
 
-- configure Wireshark to decode the Kafka TLS traffic as detailed [here](#procedure).
+- configure Wireshark to decode the Kafka TLS traffic as detailed [here](#procedure). The session key log and the packet capture are saved in the `${PWD}\work\ssl-key-log` and `${PWD}\work\tcpdump-trace` respectively. The directories are mounted in read-only mode inside the Wireshark container under the `/home/wireshark/work` path.
 
 - stop and destroy the stack when finished
 
