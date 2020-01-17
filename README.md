@@ -1,6 +1,6 @@
 # Decrypt TLS traffic to Kafka using Wireshark
 
-Usually, debugging issues related to TLS in a Java application involves setting the [debug flag](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html) to `-Djavax.net.debug=ALL`. Unfortunately, the STDOUT will then be flooded with debug entries, which makes troubleshooting the TLS communication difficult.
+Usually, debugging issues related to TLS in a Java application involves setting the [debug flag](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html) `-Djavax.net.debug=ALL`. Unfortunately, the STDOUT will then be flooded with debug entries, which makes troubleshooting the TLS communication difficult.
 
 Sometimes the problem can be solved just by decrypting the TLS traffic. One way to achieve this is to use [jSSLKeyLog](http://jsslkeylog.sourceforge.net/), which is a Java Agent Library to log TLS session keys to a file that can be loaded into the [Wireshark](https://www.wireshark.org/) network protocol analyzer.
 
@@ -22,7 +22,7 @@ Then, use the [tcpdump](https://www.tcpdump.org/) packet sniffer to capture the 
 sudo tcpdump -i eth0 -N -A 'port 9093' -w /path/to/trace.pcap
 ```
 
-on the Kafka Broker.
+on the Kafka Broker (adjust the interface, port or path to the packet capture file accordingly).
 
 Finally, open the `trace.pcap` file in Wireshark. Without configuring the session key log, the TLS payload will be displayed as "Application Data".
 
@@ -65,7 +65,7 @@ Important: building the required Docker containers requires some time as Wiresha
 
 ### Running the demo
 
-- Clone this repository
+- clone this repository
 
 - bootstrap the environment
 
@@ -106,7 +106,7 @@ Important: building the required Docker containers requires some time as Wiresha
 
 - stop the packet capture using tcpdump
 
-- open the packet capture using Wireshark. For convenience, the Docker stack provides a containerized Wireshark which is made available via the Web browser using [Xpra](https://xpra.org/).
+- open the packet capture using Wireshark. For convenience, the Docker stack provides a containerized Wireshark which is made available in the browser using [Xpra](https://xpra.org/).
   Access the Wireshark via the browser at
 
   [https://localhost:14500/?username=wireshark&password=wireshark](https://localhost:14500/?username=wireshark&password=wireshark)
