@@ -141,7 +141,3 @@ delete-work-files:           ## delete working files (sslkeylog and pcap files)
 clean:                       ## clean build artifacts
 	rm -rf $(CURRENT_DIR)/${BUILD_DIR}
 
-
-
-
-
