@@ -47,14 +47,14 @@ find "${DEFAULT_PATH_CA}" -type f \( -name "*.jks" -o -name "*.csr" -o -name "*.
 
 # Generate CA key
 openssl req \
-      -new \
-      -x509 \
-      -keyout "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
-      -out "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-      -days ${VALIDIY} \
-      -subj "${CA_SUBJ}" \
-      -passin "pass:$CA_PASS" \
-      -passout "pass:$CA_PASS"
+        -new \
+        -x509 \
+        -keyout "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
+        -out "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+        -days ${VALIDIY} \
+        -subj "${CA_SUBJ}" \
+        -passin "pass:$CA_PASS" \
+        -passout "pass:$CA_PASS"
 
 cat "${DEFAULT_PATH_CA}/${CA_NAME}.crt" "${DEFAULT_PATH_CA}/${CA_NAME}.key" > "${DEFAULT_PATH_CA}/${CA_NAME}.pem"
 
@@ -85,16 +85,16 @@ do
 
     # Sign the certificate with the certificate authority (CA)
     openssl x509 \
-        -req \
-        -CA "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-        -CAkey "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
-        -in "${DEFAULT_PATH_CA}/$i.csr" \
-        -out "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
-        -days "${VALIDIY}" \
-        -CAcreateserial \
-        -passin "pass:${CA_PASS}" \
-        -extensions v3_req \
-        -extfile <(cat <<EOF
+            -req \
+            -CA "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+            -CAkey "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
+            -in "${DEFAULT_PATH_CA}/$i.csr" \
+            -out "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
+            -days "${VALIDIY}" \
+            -CAcreateserial \
+            -passin "pass:${CA_PASS}" \
+            -extensions v3_req \
+            -extfile <(cat <<EOF
 [req]
 distinguished_name = req_distinguished_name
 x509_extensions = v3_req
@@ -115,35 +115,35 @@ EOF
 
     # Sign and import the CA certificate into the keystore
     keytool -import \
-        -noprompt \
-        -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
-        -alias CARoot \
-        -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-        -storepass "${STOREPASS}" \
-        -keypass "${KEYPASS}"
+            -noprompt \
+            -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
+            -alias CARoot \
+            -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+            -storepass "${STOREPASS}" \
+            -keypass "${KEYPASS}"
 
     # keytool -list -v -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" -storepass ${STOREPASS}
 
     # Sign and import the host certificate into the keystore
     keytool -import \
-        -noprompt \
-        -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
-        -alias $i \
-        -file "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
-        -storepass "${STOREPASS}" \
-        -keypass "${KEYPASS}" \
-        -ext "SAN=dns:$i,dns:$i.${CA_DOMAIN},dns:localhost"
+            -noprompt \
+            -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
+            -alias $i \
+            -file "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
+            -storepass "${STOREPASS}" \
+            -keypass "${KEYPASS}" \
+            -ext "SAN=dns:$i,dns:$i.${CA_DOMAIN},dns:localhost"
 
     # keytool -list -v -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" -storepass ${STOREPASS}
 
     # Create truststore and import the CA cert.
     keytool -import \
-        -noprompt \
-        -keystore ${DEFAULT_PATH_CA}/kafka.$i.truststore.jks \
-        -alias CARoot \
-        -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-        -storepass "${STOREPASS}" \
-        -keypass "${KEYPASS}"
+            -noprompt \
+            -keystore ${DEFAULT_PATH_CA}/kafka.$i.truststore.jks \
+            -alias CARoot \
+            -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+            -storepass "${STOREPASS}" \
+            -keypass "${KEYPASS}"
 
     echo "${KEYPASS}" > ${DEFAULT_PATH_CA}/${i}_sslkey_creds
     echo "${STOREPASS}" > ${DEFAULT_PATH_CA}/${i}_keystore_creds
@@ -151,35 +151,35 @@ EOF
     
     # cleanup
     find "${DEFAULT_PATH_CA}" -type f \( -name "$i-*.crt" -o -name "$i.csr" \) -exec rm {} \;
-    
+
 done
 
 
 
 # Kafkacat
 openssl genrsa \
-    -des3 \
-    -passout "pass:${PASS_CLIENT}" \
-    -out "${DEFAULT_PATH_CA}/kafkacat.client.key" \
-    1024
+        -des3 \
+        -passout "pass:${PASS_CLIENT}" \
+        -out "${DEFAULT_PATH_CA}/kafkacat.client.key" \
+        1024
 
 openssl req \
-    -new \
-    -key "${DEFAULT_PATH_CA}/kafkacat.client.key" \
-    -out "${DEFAULT_PATH_CA}/kafkacat.client.req" \
-    -subj "/CN=kafkacat.${CA_DOMAIN}/OU=${orgunit}/O=${org}/L=${locality}/ST=${state}/C=${country}" \
-    -passin "pass:${PASS_CLIENT}" \
-    -passout "pass:${PASS_CLIENT}"
+        -new \
+        -key "${DEFAULT_PATH_CA}/kafkacat.client.key" \
+        -out "${DEFAULT_PATH_CA}/kafkacat.client.req" \
+        -subj "/CN=kafkacat.${CA_DOMAIN}/OU=${orgunit}/O=${org}/L=${locality}/ST=${state}/C=${country}" \
+        -passin "pass:${PASS_CLIENT}" \
+        -passout "pass:${PASS_CLIENT}"
 
 openssl x509 \
-    -req \
-    -CA "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-    -CAkey "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
-    -in "${DEFAULT_PATH_CA}/kafkacat.client.req" \
-    -out "${DEFAULT_PATH_CA}/kafkacat-ca1-signed.pem" \
-    -days ${VALIDIY} \
-    -CAcreateserial \
-    -passin "pass:$CA_PASS"
+        -req \
+        -CA "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+        -CAkey "${DEFAULT_PATH_CA}/${CA_NAME}.key" \
+        -in "${DEFAULT_PATH_CA}/kafkacat.client.req" \
+        -out "${DEFAULT_PATH_CA}/kafkacat-ca1-signed.pem" \
+        -days ${VALIDIY} \
+        -CAcreateserial \
+        -passin "pass:$CA_PASS"
 
 
 cat << EOF > "${DEFAULT_PATH_CA}/kafkacat.conf"
