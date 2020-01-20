@@ -15,7 +15,7 @@ echo "$SCRIPT_BASE"
 
 CA_PATH="generated_ca"
 
-CA_NAME="snakeoil-ca-1"
+CA_NAME="test-ca-1"
 CA_DOMAIN="confluent.local"
 
 # Cert details
@@ -26,14 +26,14 @@ state=Baden-Wuerttemberg
 country=DE
 
 CA_SUBJ="/CN=ca1.${CA_DOMAIN}/OU=${orgunit}/O=${org}/L=${locality}/ST=${state}/C=${country}"
-CA_PASS="confluent"
+CA_PASS="codecentric"
 
 VALIDIY=3650                  # certificate validity
 
-KEYPASS="confluent"
-STOREPASS="confluent"
+KEYPASS="codecentric"
+STOREPASS="codecentric"
 
-PASS_CLIENT="confluent"
+PASS_CLIENT="codecentric"
 
 CERTS_ARRAY=( "kafka-1" )
 
@@ -43,7 +43,7 @@ mkdir -p "${DEFAULT_PATH_CA}"
 
 # cleanup
 find "${DEFAULT_PATH_CA}" -type f \( -name "*.crt" -o -name "*.key" \) -exec rm {} \;
-find "${DEFAULT_PATH_CA}" -type f \( -name "*.jks" -o -name "*.csr" -o -name "*.srl" -o -name "*.req" -o -name "*.pem" \) -exec rm {} \;
+find "${DEFAULT_PATH_CA}" -type f \( -name "*.jks" -o -name "*.csr" -o -name "*.srl" -o -name "*.req" -o -name "*.pem" -o -name "*.creds" \) -exec rm {} \;
 
 # Generate CA key
 openssl req \
@@ -61,26 +61,26 @@ cat "${DEFAULT_PATH_CA}/${CA_NAME}.crt" "${DEFAULT_PATH_CA}/${CA_NAME}.key" > "$
 # Generate Server Certificates ---------------------------------
 for i in "${CERTS_ARRAY[@]}"
 do
-	echo "Generating certificates for $i"
+    echo "Generating certificates for $i"
 
-	# Create keystores
-	keytool -genkey \
+    # Create keystores
+    keytool -genkey \
             -noprompt \
-			-alias $i \
-			-dname "CN=$i, OU=${orgunit}, O=${org}, L=${locality}, ST=${state}, C=${country}" \
+            -alias $i \
+            -dname "CN=$i, OU=${orgunit}, O=${org}, L=${locality}, ST=${state}, C=${country}" \
             -ext "SAN=dns:$i,dns:$i.${CA_DOMAIN},dns:localhost" \
-			-keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
-			-keyalg RSA \
-			-storepass ${STOREPASS} \
-			-keypass ${KEYPASS}
+            -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
+            -keyalg RSA \
+            -storepass "${STOREPASS}" \
+            -keypass "${KEYPASS}"
 
     # Create the certificate signing request (CSR)
-	keytool -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
+    keytool -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
             -alias $i \
             -certreq \
             -file "${DEFAULT_PATH_CA}/$i.csr" \
-            -storepass confluent \
-            -keypass confluent \
+            -storepass "${STOREPASS}" \
+            -keypass "${KEYPASS}" \
             -ext "SAN=dns:$i,dns:$i.${CA_DOMAIN},dns:localhost"
 
     # Sign the certificate with the certificate authority (CA)
@@ -92,7 +92,7 @@ do
         -out "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
         -days "${VALIDIY}" \
         -CAcreateserial \
-        -passin pass:confluent \
+        -passin "pass:${CA_PASS}" \
         -extensions v3_req \
         -extfile <(cat <<EOF
 [req]
@@ -119,8 +119,8 @@ EOF
         -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
         -alias CARoot \
         -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
-        -storepass ${STOREPASS} \
-        -keypass ${KEYPASS}
+        -storepass "${STOREPASS}" \
+        -keypass "${KEYPASS}"
 
     # keytool -list -v -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" -storepass ${STOREPASS}
 
@@ -130,20 +130,20 @@ EOF
         -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" \
         -alias $i \
         -file "${DEFAULT_PATH_CA}/$i-ca1-signed.crt" \
-        -storepass ${STOREPASS} \
-        -keypass ${KEYPASS} \
+        -storepass "${STOREPASS}" \
+        -keypass "${KEYPASS}" \
         -ext "SAN=dns:$i,dns:$i.${CA_DOMAIN},dns:localhost"
 
     # keytool -list -v -keystore "${DEFAULT_PATH_CA}/kafka.$i.keystore.jks" -storepass ${STOREPASS}
 
     # Create truststore and import the CA cert.
- 	keytool -import \
+    keytool -import \
         -noprompt \
         -keystore ${DEFAULT_PATH_CA}/kafka.$i.truststore.jks \
         -alias CARoot \
-        -file ${DEFAULT_PATH_CA}/snakeoil-ca-1.crt \
-        -storepass ${STOREPASS} \
-        -keypass ${KEYPASS}
+        -file "${DEFAULT_PATH_CA}/${CA_NAME}.crt" \
+        -storepass "${STOREPASS}" \
+        -keypass "${KEYPASS}"
 
     echo "${KEYPASS}" > ${DEFAULT_PATH_CA}/${i}_sslkey_creds
     echo "${STOREPASS}" > ${DEFAULT_PATH_CA}/${i}_keystore_creds
@@ -151,6 +151,7 @@ EOF
     
     # cleanup
     find "${DEFAULT_PATH_CA}" -type f \( -name "$i-*.crt" -o -name "$i.csr" \) -exec rm {} \;
+    
 done
 
 
