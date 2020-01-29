@@ -4,10 +4,10 @@ FROM debian:bullseye-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV BUILD_DEPS build-essential cmake
+ENV BUILD_DEPS build-essential zlib1g-dev liblz4-dev libssl-dev libsasl2-dev python cmake libcurl4-openssl-dev pkg-config libsystemd-dev libglvnd-dev
 ENV RUN_DEPS software-properties-common python3-xpra xpra xauth xpra-html5 websockify
 
-ENV WIRESHARK_VERSION "3.2.0"
+ENV WIRESHARK_VERSION "3.2.1"
 ENV WIRESHARK_NAME "wireshark"
 ENV WIRESHARK_DOWNLOAD_URL "https://1.eu.dl.wireshark.org/src/all-versions/${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz"
 
@@ -27,7 +27,7 @@ RUN apt-get update && \
     wget -q -O "/tmp/${WIRESHARK_NAME}-src/${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz" "${WIRESHARK_DOWNLOAD_URL}" ; \
     cd "/tmp/${WIRESHARK_NAME}-src" && \
     tar -xJvf "${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz" ; \
-    /tmp/${WIRESHARK_NAME}-src/${WIRESHARK_NAME}-${WIRESHARK_VERSION}/tools/./debian-setup.sh -y ; \
+    /tmp/${WIRESHARK_NAME}-src/${WIRESHARK_NAME}-${WIRESHARK_VERSION}/tools/./debian-setup.sh -y --install-optional; \
     \
     echo "####### Build Wireshark from sources" ; \
     mkdir -p "/tmp/${WIRESHARK_NAME}-build" && \
