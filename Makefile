@@ -12,8 +12,8 @@ SHELL=/bin/bash -eu -o pipefail
 
 echo_stdout_header = printf "\n+++++++++++++ $(1)\n"
 echo_stdout_footer = printf "+++++++++++++ $(1)\n"
-echo_fail = printf "\e[31m✘ \033\e[0m$(1)\n"
-echo_pass = printf "\e[32m✔ \033\e[0m$(1)\n"
+echo_fail = printf "\e[31m✘ \e[0m$(1)\n"
+echo_pass = printf "\e[32m✔ \e[0m$(1)\n"
 
 check-dependency = $(if $(shell command -v $(1)),$(call echo_pass,found $(1)),$(call echo_fail,$(1) not installed);exit 1)
 
@@ -65,12 +65,12 @@ check-dependencies:
 	@$(call check-dependency,keytool)
 
 
-init: check-dependencies   ## Checks dependencies
+init: check-dependencies           ## Checks dependencies
 	@echo
 	@$(call echo_pass,dependency check complete)
 
 
-build-docker-tcpdump: 	        ## Build docker container with tcpdump
+build-docker-tcpdump:             ## Build docker container with tcpdump
 	@$(call echo_stdout_header, Building docker-tcpdump)
 	mkdir -p $(CURRENT_DIR)/${BUILD_DIR}/build-docker-tcpdump
 	@echo "current path $(CURRENT_DIR)/${BUILD_DIR}/build-docker-tcpdump"
@@ -81,7 +81,7 @@ build-docker-tcpdump: 	        ## Build docker container with tcpdump
 
 
 
-build-jsslkeylog: 	            ## build jSSLKeyLog.jar from source
+build-jsslkeylog:                 ## build jSSLKeyLog.jar from source
 	@$(call echo_stdout_header, Building jSSLKeyLog Agent)
 	mkdir -p $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog
 	@echo "Download $(JSSLKEYLOG_ARCHIVE)"
@@ -101,7 +101,7 @@ build-jsslkeylog: 	            ## build jSSLKeyLog.jar from source
 	@$(call echo_stdout_footer, Finished building jSSLKeyLog Agent)
 
 
-build-docker-kafkacat: 	      ## build docker container with kafkacat
+build-docker-kafkacat: 	         ## build docker container with kafkacat
 	@$(call echo_stdout_header, Building docker-kafkacat)
 	mkdir -p $(CURRENT_DIR)/${BUILD_DIR}/build-docker-kafkacat
 	git clone "${KAFKACAT_DOWNLOAD_URL}" --branch="${KAFKACAT_VERSION}" $(CURRENT_DIR)/${BUILD_DIR}/build-docker-kafkacat/kafkacat
@@ -111,7 +111,7 @@ build-docker-kafkacat: 	      ## build docker container with kafkacat
 	@$(call echo_stdout_footer, Finished building docker-kafkacat)
 
 
-build-docker-wireshark: 	   ## build docker container with Wireshark and Xpra
+build-docker-wireshark:           ## build docker container with Wireshark and Xpra
 	@$(call echo_stdout_header, Building docker-wireshark)
 	cd $(CURRENT_DIR)/${DOCKERFILES_DIR}/docker-wireshark && \
 	docker build -t ${WIRESHARK_CONTAINER} --no-cache .
@@ -131,13 +131,13 @@ certs: 	                          ## create certificates for testing
 	@$(call echo_stdout_footer, Finished creating certificates)
 
 
-delete-work-files:           ## delete working files (sslkeylog and pcap files)
+delete-work-files:                ## delete working files (sslkeylog and pcap files)
 	@$(call echo_stdout_header, Delete working files)
 	find $(CURRENT_DIR)/work/ssl-key-log -type f ! -name '.gitkeep' -delete
 	find $(CURRENT_DIR)/work/tcpdump-trace -type f ! -name '.gitkeep' -delete
 	@$(call echo_stdout_footer, Finished deleting working files)
 
 
-clean:                       ## clean build artifacts
+clean:                            ## clean build artifacts
 	rm -rf $(CURRENT_DIR)/${BUILD_DIR}
 
