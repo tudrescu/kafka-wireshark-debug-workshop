@@ -1,8 +1,9 @@
 # Decrypt TLS traffic to Kafka using Wireshark
 
 Usually, debugging issues related to TLS in a Java application involves setting the [debug flag](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/ReadDebug.html) `-Djavax.net.debug=ALL`. Unfortunately, the STDOUT will then be flooded with debug entries, which makes troubleshooting the TLS communication difficult.
+Moreover, sometimes the problem can be solved **just** by decrypting the TLS traffic.
 
-Sometimes the problem can be solved just by decrypting the TLS traffic. One way to achieve this is to use [jSSLKeyLog](http://jsslkeylog.sourceforge.net/), which is a Java Agent Library to log TLS session keys to a file that can be loaded into the [Wireshark](https://www.wireshark.org/) network protocol analyzer.
+One way to achieve this is to use [jSSLKeyLog](http://jsslkeylog.sourceforge.net/), which is a Java Agent Library to log TLS session keys to a file that can be loaded into the [Wireshark](https://www.wireshark.org/) network protocol analyzer.
 
 Coupled with the recently improved [Kafka Protocol support](https://www.wireshark.org/docs/dfref/k/kafka.html) in Wireshark, this makes decrypting TLS traffic to/from Kafka captured using the [tcpdump](https://www.tcpdump.org/) packet sniffer easy.
 
