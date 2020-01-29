@@ -96,6 +96,7 @@ build-jsslkeylog:                 ## build jSSLKeyLog.jar from source
 		maven:"${MAVEN_DOCKER_VERSION}" mvn clean install \
 		-Dmaven.compiler.source="${JDK_VERSION}" \
 		-Dmaven.compiler.target="${JDK_VERSION}"
+	mkdir -p "$(CURRENT_DIR)/tools/"
 	@cp "$(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog/${JSSLKEYLOG_NAME}-${JSSLKEYLOG_VERSION}-src/${JSSLKEYLOG_NAME}.jar" "$(CURRENT_DIR)/tools/"
 	rm -rf $(CURRENT_DIR)/${BUILD_DIR}/build-jsslkeylog
 	@$(call echo_stdout_footer, Finished building jSSLKeyLog Agent)
