@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV BUILD_DEPS build-essential zlib1g-dev liblz4-dev libssl-dev libsasl2-dev python cmake libcurl4-openssl-dev pkg-config libsystemd-dev libglvnd-dev
 ENV RUN_DEPS software-properties-common python3-xpra xpra xauth xpra-html5 websockify
 
-ENV WIRESHARK_VERSION "3.2.1"
+ENV WIRESHARK_VERSION "3.2.0"
 ENV WIRESHARK_NAME "wireshark"
 ENV WIRESHARK_DOWNLOAD_URL "https://1.eu.dl.wireshark.org/src/all-versions/${WIRESHARK_NAME}-${WIRESHARK_VERSION}.tar.xz"
 
@@ -42,7 +42,6 @@ RUN apt-get update && \
     cd / ; \
     rm -rf "/tmp/${WIRESHARK_NAME}-build" ; \
     rm -rf "/tmp/${WIRESHARK_NAME}-src" ; \
-    apt-get purge -y --auto-remove $BUILD_DEPS ; \
     apt-get clean -y ; \
     apt-get autoclean -y ; \
     rm /var/log/dpkg.log /var/log/alternatives.log /var/log/apt/*.log ; \

@@ -1,3 +1,5 @@
 .vscode
 tools/*.jar
 certs/generated_ca
+work/ssl-key-log/*.log
+work/tcpdump-trace/.*pcap
